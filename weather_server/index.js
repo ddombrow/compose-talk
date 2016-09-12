@@ -14,10 +14,7 @@ var forecast = new Forecast({
     seconds: 45
   }
 });
- 
 
-
-// respond with "hello world" when a GET request is made to the homepage
 app.get('/', function(req, res) {
   	// Retrieve weather information from coordinates (Sydney, Australia) 
 	forecast.get([38.889469, -77.035258], function(err, weather) {
@@ -27,6 +24,21 @@ app.get('/', function(req, res) {
 	});
 });
 
-app.listen(3001, function () {
-  console.log('Weather server listening on port 3001!');
+app.get('/health', function(req, res) {
+  res.status(200).json({status:"ok"});
 });
+
+///OMG TAKES SO LONG TO INITIALIZE
+setTimeout(function() {
+   app.listen(3001, function () {
+    console.log('Weather server listening on port 3001!');
+  });
+}, randInt(1000,5000));
+
+// Returns a random integer between min (included) and max (included)
+// Using Math.round() will give you a non-uniform distribution!
+function randInt(min, max) {
+  min = Math.ceil(min);
+  max = Math.floor(max);
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}

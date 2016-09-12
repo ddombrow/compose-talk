@@ -9,4 +9,4 @@ RUN npm install
 COPY . /srv/time_server
 EXPOSE 3000
 CMD npm start
-HEALTHCHECK --interval=1m --timeout=2s CMD npm run health
+HEALTHCHECK --interval=5s --timeout=2s CMD npm run health

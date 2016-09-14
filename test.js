@@ -1,24 +1,11 @@
 const assert = require("chai").assert;
 const dockerManager = require("@socialtables/docker-manager");
 const mlog = require("mocha-logger");
-const req = require("superagent");
+const req = require("request-promise");
+var redis = require("redis");
+let client = null; 
 
 const COMPOSE_TIMEOUT = 120000;
-/*const yaml = require("node-yaml");
-
-yaml.read("./docker-compose.yml")
-	.then(data => {
-		for (svc in data.services) {
-			if( data.services.hasOwnProperty( svc )) {
-				console.log(svc);
-			}	
-		}
-		
-	})
-	.catch(err => {
-		console.error(err);
-	});
-*/
 
 describe("Integration tests for architecture: ", function() {
 	
@@ -32,17 +19,79 @@ describe("Integration tests for architecture: ", function() {
 	});
 	
 	it("time server should be up", () => {
-		return req.get("http://localhost:3000/health")
+		var options = {
+			method: "GET",
+			uri: "http://localhost:3000/health",
+			resolveWithFullResponse: true
+		};
+		return req(options)
 			.then(res => {
-				assert(res.statusType == 2);
+				assert(res.statusCode == 200);
 			});
 	});
 
 	it("weather server should be up", () => {
-		return req.get("http://localhost:3001/health")
+		var options = {
+			method: "GET",
+			uri: "http://localhost:3001/health",
+			resolveWithFullResponse: true
+		};
+		return req(options)
 			.then(res => {
-				assert(res.statusType == 2);
+				assert(res.statusCode == 200);
 			});
+	});
+
+	describe("test the weather server", function() {
+		it("should respond with the current dc weather", () => {
+			var options = {
+			method: "GET",
+			uri: "http://localhost:3001/",
+			resolveWithFullResponse: true
+		};
+		return req(options)
+			.then(res => {
+				assert(res.statusCode == 200);
+				assert(res.body);
+				const parsedBody = JSON.parse(res.body);
+				//console.log("parsedBody: ",parsedBody);
+				assert(parsedBody);
+			});
+		});
+	});
+
+	describe("test that values are being inserted into the cache", function() {
+		before(function() {
+			client = redis.createClient({});
+		});
+
+		it("should have the current time in current:dc:time", (done) => {
+			client.get("current:dc:time", (err, data) => {
+				if (err) {
+					done(err);
+				}
+				else {
+					assert(data);
+					done();
+				}
+			});
+		});
+
+		it("should have the current weather in current:dc:weather", (done) => {
+			client.get("current:dc:weather", (err, data) => {
+				if (err) {
+					done(err);
+				}
+				else {
+					assert(data);
+					done();
+				}
+			});
+		});
+
+		after(function() {
+			client.quit();
+		});
 	});
 
 	after(function() {

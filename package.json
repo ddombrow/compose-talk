@@ -4,18 +4,17 @@
   "description": "",
   "main": "test.js",
   "dependencies": {
+    "@socialtables/docker-manager": "^1.2.0",
     "chai": "^3.5.0",
-    "node-yaml": "^3.0.0",
-    "request": "^2.74.0",
     "mocha": "^3.0.2",
     "mocha-logger": "^1.0.4",
+    "node-yaml": "^3.0.0",
+    "redis": "^2.6.2",
+    "request": "^2.74.0",
     "request-promise": "^4.1.1",
-    "superagent": "^2.2.0",
     "superagent-prefix": "0.0.2"
   },
-  "devDependencies": {
-   
-  },
+  "devDependencies": {},
   "scripts": {
     "test": "mocha"
   },

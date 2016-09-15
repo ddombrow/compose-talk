@@ -5,6 +5,7 @@
   "main": "test.js",
   "dependencies": {
     "@socialtables/docker-manager": "^1.2.0",
+    "array-includes": "^3.0.2",
     "chai": "^3.5.0",
     "mocha": "^3.0.2",
     "mocha-logger": "^1.0.4",
